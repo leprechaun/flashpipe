@@ -85,10 +85,6 @@ func constructQueryParameters(cmd *cobra.Command, cmdErr error, analyticsSiteId 
 	// 4 - Processing Status & 5 - Error Message
 	if cmdErr != nil {
 		params.Set("dimension4", "Error")
-		errorMessage := logger.GetErrorDetails(cmdErr)
-		errorMessage = strings.ReplaceAll(errorMessage, tmnHost, hashedHost) // Anonymise host
-		errorMessage = strings.ReplaceAll(errorMessage, "\n", ",")           // Remove line feed in string
-		params.Set("dimension5", errorMessage)
 	} else {
 		params.Set("dimension4", "Success")
 	}
