@@ -69,6 +69,7 @@ Flags:
 Global Flags:
       --config string               config file (default is $HOME/flashpipe.yaml)
       --debug                       Show debug logs
+      --allow-analytics-reporting   Allow the reporting of analytics
       --oauth-clientid string       Client ID for using OAuth
       --oauth-clientsecret string   Client Secret for using OAuth
       --oauth-host string           Host for OAuth token server excluding https:// 

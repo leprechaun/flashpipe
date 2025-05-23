@@ -20,9 +20,8 @@ var Host string
 var SiteId string
 
 func Log(cmd *cobra.Command, err error, startTime time.Time) {
-	if Host != "" && SiteId != "" {
-		log.Debug().Msg("Logging to Matomo Analytics")
-
+	analyticsEnabled := config.GetBool(cmd, "allow-analytics-reporting")
+	if Host != "" && SiteId != "" && analyticsEnabled {
 		collectDataAndSend(cmd, err, startTime, Host, "https", 443, SiteId, true)
 	}
 }

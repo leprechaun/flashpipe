@@ -48,6 +48,7 @@ automating time-consuming manual tasks like:
 	rootCmd.PersistentFlags().String("oauth-path", "/oauth/token", "Path for OAuth token server")
 
 	rootCmd.PersistentFlags().Bool("debug", false, "Show debug logs")
+	rootCmd.PersistentFlags().Bool("allow-analytics-reporting", false, "Allow the reporting of analytics")
 
 	_ = rootCmd.MarkPersistentFlagRequired("tmn-host")
 	rootCmd.MarkFlagsRequiredTogether("tmn-userid", "tmn-password")
