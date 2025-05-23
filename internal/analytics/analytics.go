@@ -21,19 +21,19 @@ var SiteId string
 func Log(cmd *cobra.Command, err error, startTime time.Time) {
 	analyticsEnabled := config.GetBool(cmd, "allow-analytics-reporting")
 	if Host != "" && SiteId != "" && analyticsEnabled {
-		collectDataAndSend(cmd, err, startTime, Host, "https", 443, SiteId, true)
+		collectDataAndSend(cmd, err, startTime, Host, "https", 443, SiteId)
 	}
 }
 
-func collectDataAndSend(cmd *cobra.Command, cmdErr error, startTime time.Time, analyticsHost string, analyticsHostScheme string, analyticsHostPort int, analyticsSiteId string, showLogs bool) {
+func collectDataAndSend(cmd *cobra.Command, cmdErr error, startTime time.Time, analyticsHost string, analyticsHostScheme string, analyticsHostPort int, analyticsSiteId string) {
 
 	params := constructQueryParameters(cmd, cmdErr, analyticsSiteId, startTime)
 
 	urlPath := fmt.Sprintf("/matomo.php?%s", MapToString(params))
 	// TODO - increase timeout ?
-	exe := httpclnt.New("", "", "", "", "", "", analyticsHost, analyticsHostScheme, analyticsHostPort, showLogs)
+	exe := httpclnt.New("", "", "", "", "", "", analyticsHost, analyticsHostScheme, analyticsHostPort)
 	_, err := exe.ExecGetRequest(urlPath, nil)
-	if err != nil && showLogs {
+	if err != nil {
 		log.Error().Msgf("Analytics logging error: %s", err.Error())
 	}
 }
