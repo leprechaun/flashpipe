@@ -52,7 +52,7 @@ jobs:
         FLASHPIPE_APIPORTAL_OAUTH_CLIENTSECRET: ${{ secrets.APIPORTAL_OAUTH_CLIENTSECRET }}
 
     - name: Build Go application
-      run: go build -v -ldflags="-X 'github.com/engswee/flashpipe/internal/analytics.Host=$ANALYTICS_HOST' -X 'github.com/engswee/flashpipe/internal/analytics.SiteId=2' -X 'github.com/engswee/flashpipe/internal/analytics.ShowLogs=true'" -o output/ ./...
+      run: go build -v -ldflags="-X 'github.com/engswee/flashpipe/internal/analytics.Host=$ANALYTICS_HOST' -X 'github.com/engswee/flashpipe/internal/analytics.SiteId=2'" -o output/ ./...
       env:
         CGO_ENABLED: 0
         ANALYTICS_HOST: ${{ secrets.ANALYTICS_HOST }}

@@ -18,15 +18,12 @@ import (
 
 var Host string
 var SiteId string
-var ShowLogs string
 
 func Log(cmd *cobra.Command, err error, startTime time.Time) {
 	if Host != "" && SiteId != "" {
-		if ShowLogs == "true" {
-			log.Debug().Msg("Logging to Matomo Analytics")
-		}
+		log.Debug().Msg("Logging to Matomo Analytics")
 
-		collectDataAndSend(cmd, err, startTime, Host, "https", 443, SiteId, ShowLogs == "true")
+		collectDataAndSend(cmd, err, startTime, Host, "https", 443, SiteId, true)
 	}
 }
 
