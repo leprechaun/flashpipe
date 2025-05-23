@@ -7,7 +7,6 @@ import (
 	"github.com/elliotchance/orderedmap/v2"
 	"github.com/engswee/flashpipe/internal/config"
 	"github.com/engswee/flashpipe/internal/httpclnt"
-	"github.com/engswee/flashpipe/internal/logger"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 	"net/url"
@@ -40,10 +39,8 @@ func collectDataAndSend(cmd *cobra.Command, cmdErr error, startTime time.Time, a
 }
 
 func constructQueryParameters(cmd *cobra.Command, cmdErr error, analyticsSiteId string, startTime time.Time) *orderedmap.OrderedMap[string, string] {
-	tmnHost := config.GetString(cmd, "tmn-host")
-	tmnUserId := config.GetString(cmd, "tmn-userid")
-	oauthClientId := config.GetString(cmd, "oauth-clientid")
-	uniqueKey := fmt.Sprintf("%v:%v", tmnUserId, oauthClientId)
+	hashedHost := HashString(config.GetString(cmd, "tmn-host"))
+	hashedUserIdentifiers := HashString(fmt.Sprintf("%v:%v", config.GetString(cmd, "tmn-userid"), config.GetString(cmd, "oauth-clientid")))
 
 	// Matomo API reference - https://developer.matomo.org/api-reference/tracking-api
 	params := orderedmap.NewOrderedMap[string, string]()
@@ -52,12 +49,18 @@ func constructQueryParameters(cmd *cobra.Command, cmdErr error, analyticsSiteId 
 	params.Set("new_visit", "1")
 	params.Set("action_name", cmd.Name())
 	params.Set("apiv", "1")
-	hashedHost := HashString(tmnHost)
-	params.Set("uid", HashString(tmnHost))
+	params.Set("uid", hashedHost)
+
+	usingBasic := config.GetString(cmd, "oauth-host") == ""
+	if usingBasic {
+		params.Set("dimension20", "BASIC")
+	} else {
+		params.Set("dimension20", "OAUTH")
+	}
 
 	// Custom dimensions
 	// 1 - User or Client ID
-	params.Set("dimension1", HashString(uniqueKey))
+	params.Set("dimension1", hashedUserIdentifiers)
 	// 2 - Version
 	params.Set("dimension2", getRootCmdVersion(cmd))
 
@@ -172,12 +175,6 @@ func constructQueryParameters(cmd *cobra.Command, cmdErr error, analyticsSiteId 
 	processingTime := endTime.Sub(startTime).Seconds()
 	params.Set("dimension19", fmt.Sprintf("%.2f", processingTime))
 	// 20 - Basic or OAuth
-	oauthHost := config.GetString(cmd, "oauth-host")
-	if oauthHost == "" {
-		params.Set("dimension20", "BASIC")
-	} else {
-		params.Set("dimension20", "OAUTH")
-	}
 	return params
 }
 
