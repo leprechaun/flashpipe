@@ -15,7 +15,7 @@ jobs:
     strategy:
       matrix:
         arch: [amd64, arm64]
-        os: [darwin, linux, windows]
+        os: [darwin, linux]
 
     steps:
     - name: Check out Git repository
