@@ -40,3 +40,10 @@ jobs:
       with:
         name: flashpipe-${{ matrix.os }}-${{ matrix.arch }}
         path: flashpipe
+
+  attest:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - run: |
+          echo Hello world
