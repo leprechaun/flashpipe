@@ -4,6 +4,11 @@ on:
   workflow_dispatch:
   push: {}
 
+permissions:
+  id-token: write
+  contents: read
+  attestations: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -26,7 +31,12 @@ jobs:
         env GOOS=${{ matrix.os }} GOARCH=${{ matrix.arch }} go build -v -o ./ ./...
         ls -a
 
+    - name: Generate artifact attestation
+      uses: actions/attest-build-provenance@v2
+      with:
+        subject-path: flashpipe
+
     - uses: actions/upload-artifact@v4
       with:
         name: flashpipe-${{ matrix.os }}-${{ matrix.arch }}
-        path: flashpipe*
+        path: flashpipe
