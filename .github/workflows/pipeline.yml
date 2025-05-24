@@ -29,21 +29,39 @@ jobs:
     - name: Build
       run: |
         env GOOS=${{ matrix.os }} GOARCH=${{ matrix.arch }} go build -v -o ./ ./...
-        ls -a
+        mv flashpipe flashpipe-${{ matrix.os }}-${{ matrix.arch }}
 
-    - name: Generate artifact attestation
-      uses: actions/attest-build-provenance@v2
-      with:
-        subject-path: flashpipe
 
     - uses: actions/upload-artifact@v4
       with:
         name: flashpipe-${{ matrix.os }}-${{ matrix.arch }}
-        path: flashpipe
+        path: flashpipe-${{ matrix.os }}-${{ matrix.arch }}
 
   attest:
     runs-on: ubuntu-latest
     needs: build
     steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: flashpipe-linux-amd64
+          path: ./
+      - uses: actions/download-artifact@v4
+        with:
+          name: flashpipe-linux-arm64
+          path: ./
+      - uses: actions/download-artifact@v4
+        with:
+          name: flashpipe-darwin-amd64
+          path: ./
+      - uses: actions/download-artifact@v4
+        with:
+          name: flashpipe-darwin-arm64
+          path: ./
+
       - run: |
           echo Hello world
+
+      - name: Generate artifact attestation
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-path: flashpipe-*-*
