@@ -15,7 +15,7 @@ jobs:
     strategy:
       matrix:
         arch: [amd64, arm64]
-        os: [darwin, linux]
+        os: [windows, darwin, linux]
 
     steps:
     - name: Check out Git repository
@@ -56,6 +56,14 @@ jobs:
         with:
           name: flashpipe-darwin-arm64
           path: ./flashpipe-darwin-arm64
+      - uses: actions/download-artifact@v4
+        with:
+          name: flashpipe-windows-amd64
+          path: ./flashpipe-windows-amd64
+      - uses: actions/download-artifact@v4
+        with:
+          name: flashpipe-windows-arm64
+          path: ./flashpipe-windows-arm64
 
       - run: |
           echo Hello world
