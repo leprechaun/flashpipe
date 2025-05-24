@@ -1,0 +1,32 @@
+name: Pipeline
+
+on:
+  workflow_dispatch:
+  push: {}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        arch: [amd64, arm64]
+        os: [darwin, linux, windows]
+
+    steps:
+    - name: Check out Git repository
+      uses: actions/checkout@v4
+
+    - name: Set up Go
+      uses: actions/setup-go@v5
+      with:
+        go-version-file: 'go.mod'
+
+    - name: Build
+      run: |
+        env GOOS=${{ matrix.os }} GOARCH=${{ matrix.arch }} go build -v -o ./ ./...
+        ls -a
+
+    - uses: actions/upload-artifact@v4
+      with:
+        name: flashpipe-${{ matrix.os }}-${{ matrix.arch }}
+        path: flashpipe*
